@@ -164,63 +164,6 @@ def load_saved_features(save_dir):
     return all_features, all_labels
 
 # ----------------------------
-# 4. Balanced KMeans Function
-# ----------------------------
-
-def balanced_kmeans(X, num_clusters, max_iter=100, random_state=None):
-    """
-    Simple implementation of Balanced KMeans where each cluster has approximately the same number of samples.
-    Note: This is a heuristic and may not be optimal for all datasets.
-
-    Args:
-        X (numpy.ndarray): Feature matrix.
-        num_clusters (int): Number of clusters.
-        max_iter (int): Maximum number of iterations.
-        random_state (int, optional): Random seed.
-
-    Returns:
-        assignments (numpy.ndarray): Cluster assignments for each sample.
-    """
-    if random_state:
-        np.random.seed(random_state)
-    n_samples = X.shape[0]
-    samples_per_cluster = n_samples // num_clusters
-    assignments = np.full(n_samples, -1)
-
-    # Initialize cluster centers randomly
-    initial_indices = np.random.choice(n_samples, num_clusters, replace=False)
-    centers = X[initial_indices]
-
-    for iteration in range(max_iter):
-        print(f'Balanced KMeans Iteration {iteration + 1}')
-        # Compute distances
-        distances = np.linalg.norm(X[:, np.newaxis] - centers, axis=2)  # Shape: (n_samples, num_clusters)
-        sorted_clusters = np.argsort(distances, axis=1)
-
-        # Reset assignments
-        assignments.fill(-1)
-        cluster_counts = Counter()
-
-        for i in range(n_samples):
-            for cluster in sorted_clusters[i]:
-                if cluster_counts[cluster] < samples_per_cluster:
-                    assignments[i] = cluster
-                    cluster_counts[cluster] += 1
-                    break
-
-        # Check if all samples are assigned
-        if np.all(assignments != -1):
-            print('All samples have been assigned to clusters.')
-            break
-
-        # Update centers
-        for cluster in range(num_clusters):
-            if cluster_counts[cluster] > 0:
-                centers[cluster] = X[assignments == cluster].mean(axis=0)
-
-    return assignments
-
-# ----------------------------
 # 5. Main Execution Block for Training and Saving Models
 # ----------------------------
 
@@ -245,7 +188,7 @@ def main():
     # ----------------------------
 
     # Replace 'path_to_landmass_dataset' with the actual path to your dataset
-    dataset_path = "D:\\Astronomy ML\\LANDMASS\\LANDMASS\\LANDMASS2"
+    dataset_path = "dataset"
     if not os.path.exists(dataset_path):
         print(f"Dataset path '{dataset_path}' does not exist. Please check the path.")
         return
@@ -398,36 +341,6 @@ def main():
     plt.savefig('umap_true_labels.png')
     plt.close()
     print("UMAP plot colored by true labels saved as 'umap_true_labels.png'.")
-
-    # ----------------------------
-    # 10. Balanced KMeans Implementation
-    # ----------------------------
-
-    print('Clustering with Balanced KMeans...')
-    balanced_assignments = balanced_kmeans(features_reduced, num_clusters=num_clusters, random_state=42)
-    print('Balanced Clustering completed.')
-
-    # Evaluate Balanced KMeans
-    ari_balanced = adjusted_rand_score(true_labels_int, balanced_assignments)
-    print(f'Balanced KMeans Adjusted Rand Index (ARI): {ari_balanced:.4f}')
-
-    # Analyze cluster balance
-    balanced_cluster_counts = Counter(balanced_assignments)
-    print('Balanced Cluster distribution:')
-    for cluster, count in balanced_cluster_counts.items():
-        print(f'  Cluster {cluster}: {count} samples')
-
-    # ----------------------------
-    # 11. Save Balanced KMeans Assignments
-    # ----------------------------
-
-    np.save('balanced_cluster_assignments.npy', balanced_assignments)
-    print("Balanced KMeans assignments saved as 'balanced_cluster_assignments.npy'.")
-
-    # ----------------------------
-    # 12. Save Models and Results (Optional)
-    # ----------------------------
-
     # Save the feature extractor model
     torch.save(feature_extractor.state_dict(), 'feature_extractor.pth')
     print("Feature extractor model saved as 'feature_extractor.pth'.")
@@ -464,7 +377,7 @@ def test():
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
-    new_data_path = "D:\\Astronomy ML\\LANDMASS\\LANDMASS\\LANDMASS1"
+    new_data_path = "test_dataset"
     new_dataset = SeismicDataset(root_dir=new_data_path, transform=transform, mat_key='img')
     new_dataloader = DataLoader(new_dataset, batch_size=64, shuffle=False, num_workers=4)
 
@@ -554,5 +467,5 @@ def test():
     print("\nEnhanced Classification Report:")
     print(pd.DataFrame(metrics).to_string(index=False))
 if __name__=='__main__':
-    test()
+    main()
     
