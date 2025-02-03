@@ -129,7 +129,7 @@ This project automates the process of:
 3. **Running the Code:**
    - Run the script from the command line:
         python main.py
-   - The script will execute feature extraction, clustering, evaluation, and testing on new seismic data.
+   - The script will execute feature extraction, clustering, evaluation, and testing on new seismic data / or used for testing depending upon which function you choose to run in the script!.
 
 4. **Results:**
    - Examine the generated files and visualizations to analyze clustering performance and geological anomalies.
