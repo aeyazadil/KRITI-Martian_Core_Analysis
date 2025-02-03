@@ -71,6 +71,7 @@ With limited seismic observations, preventing overfitting and ensuring generaliz
 
 ### **2. Data Sources**
 - https://dataverse.ipgp.fr/dataset.xhtml?persistentId=doi:10.18715/IPGP.2023.llxn7e6d
+- Use LSL_Models.zip for data for our code. We merged all the data from LSL_Models and turned it into a single csv file. 
 
 
 
