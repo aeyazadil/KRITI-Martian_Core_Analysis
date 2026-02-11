@@ -33,7 +33,6 @@ The document is structured into the following modules:
 ## File Details
 - **Document Name:** Kriti_Astronomy_Final.pdf
 - **Format:** PDF
-- **Author(s):** [Author Name, if applicable]
 - **Date:** February 1, 2025
 - **Published in:** Equinox, Astronomy Club of IIT Guwahati
 
